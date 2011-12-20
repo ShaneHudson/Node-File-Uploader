@@ -1,14 +1,13 @@
 var express = require('express');
-var multipart = require('multipart');
 var fs = require('fs');
 
 var app = express.createServer();
 
 app.configure(function() {
   app.use(express.logger());
-  app.use(express.bodyDecoder());
+  app.use(express.bodyParser());
   app.use(express.methodOverride());
-  app.use(express.staticProvider(__dirname + '/static'));
+  app.use(express.static(__dirname + '/static'));
 });
 
 app.configure('development', function () {
@@ -39,9 +38,17 @@ app.get('/products', function(req, res) {
 });
 
 app.get('/products/new', function(req, res) {
-  res.render('products/new', {locals: {
-    product: req.body && req.body.product || products.new()
-  }});
+  var product = req.body && req.body.product || products.new();
+  photos.list(function(err, photo_list) {
+    if (err) {
+      throw err;
+    }
+    res.render('products/new', {locals: {
+      product: product,
+      photos: photo_list
+    }});
+
+  });
 });
 
 app.post('/products', function(req, res) {
@@ -91,33 +98,15 @@ app.get('/photos/new', function(req, res) {
 });
 
 app.post('/photos', function(req, res) {
-  req.setEncoding('binary');
-  
-  var parser = multipart.parser();
-  
-  parser.headers = req.headers;
-  var ws;
-  
-  parser.onPartBegin = function(part) {
-    ws = fs.createWriteStream(__dirname + '/static/uploads/photos/' + part.filename);
-    ws.on('error', function(err) {
-      throw err;
-    });
-  };
-  
-  parser.onData = function(data) {
-    ws.write(data, 'binary');
-  };
-  
-  parser.onPartEnd = function() {
-    ws.end();
-    parser.close();
+	console.log(req.files.photo);
+	var newFile =__dirname+'/static/uploads/photos/'+ req.files.photo.name;
+  	fs.rename(req.files.photo.path , newFile, function (data,error) {
+		console.log(data); 
+		if(error) {
+			throw error;
+		}
+	});
     res.redirect('/photos');
-  };
-  
-  req.on('data', function(data) {
-    parser.write(data);
-  });
   
 });
 

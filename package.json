@@ -1,0 +1,18 @@
+{
+  "author": "Jorge Ramos <jAlpedrinhaRamos@gmail.com> (about.me/jAlpedrinha)",
+  "name": "tuts_ep12",
+  "description": "Update ep12 to recent express and node versions",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jAlpedrinha/nodetuts_ep12.git"
+  },
+  "engines": {
+    "node": "~0.6.1"
+  },
+  "dependencies": {
+	"express":"2.5.2",
+	"jade" : ">0.0.1"
+  },
+  "devDependencies": {}
+}
