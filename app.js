@@ -29,7 +29,7 @@ app.get('/', function(req, res) {
 });
 
 var products = require('./products');
-var photos   = require('./photos');
+var files   = require('./files');
 
 app.get('/products', function(req, res) {
   res.render('products/index', {locals: {
@@ -39,13 +39,13 @@ app.get('/products', function(req, res) {
 
 app.get('/products/new', function(req, res) {
   var product = req.body && req.body.product || products.new();
-  photos.list(function(err, photo_list) {
+  files.list(function(err, file_list) {
     if (err) {
       throw err;
     }
     res.render('products/new', {locals: {
       product: product,
-      photos: photo_list
+      files: file_list
     }});
 
   });
@@ -65,13 +65,13 @@ app.get('/products/:id', function(req, res) {
 
 app.get('/products/:id/edit', function(req, res) {
   var product = products.find(req.params.id);
-  photos.list(function(err, photo_list) {
+  files.list(function(err, file_list) {
     if (err) {
       throw err;
     }
     res.render('products/edit', {locals: {
       product: product,
-      photos: photo_list
+      files: file_list
     }});
     
   });
@@ -83,30 +83,30 @@ app.put('/products/:id', function(req, res) {
   res.redirect('/products/'+id);
 });
 
-/* Photos */
+/* files */
 
-app.get('/photos', function(req, res) {
-  photos.list(function(err, photo_list) {
-    res.render('photos/index', {locals: {
-      photos: photo_list
+app.get('/files', function(req, res) {
+  files.list(function(err, file_list) {
+    res.render('files/index', {locals: {
+      files: file_list
     }})
   });
 });
 
-app.get('/photos/new', function(req, res) {
-  res.render('photos/new');
+app.get('/files/new', function(req, res) {
+  res.render('files/new');
 });
 
-app.post('/photos', function(req, res) {
-	console.log(req.files.photo);
-	var newFile =__dirname+'/static/uploads/photos/'+ req.files.photo.name;
-  	fs.rename(req.files.photo.path , newFile, function (data,error) {
+app.post('/files', function(req, res) {
+	console.log(req.files.file);
+	var newFile =__dirname+'/static/uploads/files/'+ req.files.file.name;
+  	fs.rename(req.files.file.path , newFile, function (data,error) {
 		console.log(data); 
 		if(error) {
 			throw error;
 		}
 	});
-    res.redirect('/photos');
+    res.redirect('/files');
   
 });
 
